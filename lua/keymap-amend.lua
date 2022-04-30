@@ -93,9 +93,10 @@ local function get_original(mode, map)
    end
 
    local feedkeys_mode = map.noremap and 'in' or 'im'
+   -- local count = (map.lhs == map.rhs) and vim.v.count1 or ''
 
    return function()
-      vim.api.nvim_feedkeys(termcodes(lhs), feedkeys_mode, true)
+      vim.api.nvim_feedkeys(vim.v.count1 .. termcodes(lhs), feedkeys_mode, true)
    end
 end
 
