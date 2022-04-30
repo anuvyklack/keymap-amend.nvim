@@ -1,5 +1,3 @@
-local keymap = {}
-
 ---Shortcut for `nvim_replace_termcodes`.
 ---@param keys string
 ---@return string
@@ -19,7 +17,7 @@ end
 ---@param mode string
 ---@param lhs string
 ---@return table
-keymap.get_map = function(mode, lhs)
+local function get_map(mode, lhs)
    for _, map in ipairs(vim.api.nvim_buf_get_keymap(0, mode)) do
       if keymap_equals(map.lhs, lhs) then
          return {
@@ -70,7 +68,7 @@ end
 ---@param mode string mode short name
 ---@param map table keymap object
 ---@return function
-keymap.original = function(mode, map)
+local function get_original(mode, map)
    local lhs = string.format('<Plug>(keymap-amend.fallback:%s)', map.lhs)
 
    if map.buffer then
@@ -101,7 +99,7 @@ keymap.original = function(mode, map)
    end
 end
 
--- keymap.original = function(_, map)
+-- local function original(_, map)
 --    return function()
 --       local f = {} -- keys for feeding
 --       if map.expr then
@@ -125,12 +123,12 @@ end
 -- end
 
 local function amend(mode, lhs, rhs, opts)
-   local map = keymap.get_map(mode, lhs)
-   local original = keymap.original(mode, map)
+   local map = get_map(mode, lhs)
+   local original = get_original(mode, map)
    vim.keymap.set(mode, lhs, function() rhs(original) end, opts)
 end
 
-keymap.amend = function(mode, ...)
+local function multi_modes_amend(mode, ...)
    if type(mode) == 'table' then
       for _, m in ipairs(mode) do
          amend(m, ...)
@@ -140,4 +138,4 @@ keymap.amend = function(mode, ...)
    end
 end
 
-return keymap
+return multi_modes_amend
