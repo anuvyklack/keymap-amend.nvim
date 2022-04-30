@@ -8,19 +8,21 @@
 This plugin delivers a function that allows to amend the exisintg keybinding.
 Its signature is equal to **vim.keymap.set** function (`:help vim.keymap.set()`)
 with one exception: the `rhs` parameter should be function that receives one
-parameter. It is a function on call of which the original keymapping will be
-executed:
+parameter --- a function on call of which the original keymapping will be
+executed. This function is constructed and passed automaticaly.  You only need
+to 'accept' it in your `rhs` function and call on need.
 
 ```lua
-local keymap_amend = require('keymap-amend')
+local keymap = vim.keymap
+keymap.amend = require('keymap-amend')
 
-keymap_amend(mode, lhs, function(original)
+keymap.amend(mode, lhs, function(original)
     -- your custom logic
-    original() -- execute the original lhs mapping
+    original() -- execute the original 'lhs' mapping
 end, opts)
 ```
 
-And you need to watch that the amendment happens after the original keymap is set.
+You need to watch that the amendment happens after the original keymap is set.
 
 ## Acknowledgments
 
