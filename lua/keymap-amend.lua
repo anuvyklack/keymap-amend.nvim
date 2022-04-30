@@ -100,7 +100,7 @@ local function get_original(mode, map)
    end
 end
 
--- local function original(_, map)
+-- local function get_original(_, map)
 --    return function()
 --       local f = {} -- keys for feeding
 --       if map.expr then
@@ -123,20 +123,29 @@ end
 --    end
 -- end
 
-local function amend(mode, lhs, rhs, opts)
+---@param mode string
+---@param lhs string
+---@param rhs string | function
+---@param opts table
+local function single_mode_amend(mode, lhs, rhs, opts)
    local map = get_map(mode, lhs)
    local original = get_original(mode, map)
    vim.keymap.set(mode, lhs, function() rhs(original) end, opts)
 end
 
-local function multi_modes_amend(mode, ...)
+---Amend the existing keymap.
+---@param mode string | string[]
+---@param lhs string
+---@param rhs string | function
+---@param opts table
+local function amend(mode, lhs, rhs, opts)
    if type(mode) == 'table' then
       for _, m in ipairs(mode) do
-         amend(m, ...)
+         single_mode_amend(m, lhs, rhs, opts)
       end
    else
-      amend(mode, ...)
+      single_mode_amend(mode, lhs, rhs, opts)
    end
 end
 
-return multi_modes_amend
+return amend
