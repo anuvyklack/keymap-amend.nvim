@@ -24,6 +24,24 @@ end, opts)
 
 You need to watch that the amendment happens after the original keymap is set.
 
+## Examples
+
+```lua
+keymap.amend('n', 'k', function(original)
+   print('k key is amended!')
+   original()
+end)
+```
+
+```lua
+keymap.amend('n', '<Esc>', function(original)
+   if vim.v.hlsearch and vim.v.hlsearch == 1 then
+      vim.cmd('nohlsearch')
+   end
+   original()
+end)
+```
+
 ## Acknowledgments
 
 This plugin was inspired with [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
