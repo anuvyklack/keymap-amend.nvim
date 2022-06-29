@@ -1,9 +1,9 @@
 # Neovim keymap amend
 
-> :warning: **WARNING**: Neovim v0.7 or higher is required
-
 > :warning: **WARNING**: This plugin is in beta and a lot of rough edges are
 > expected. You are welcome to open issues.
+
+**Neovim v0.7 or higher is required**
 
 This plugin delivers a function that allows to amend the exisintg keybinding.
 Its signature is equal to **vim.keymap.set** function (`:help vim.keymap.set()`)
@@ -33,13 +33,16 @@ keymap.amend('n', 'k', function(original)
 end)
 ```
 
+Make `<Esc>` disable highlighting of recently searched text in addition to its
+original functionality:
+
 ```lua
 keymap.amend('n', '<Esc>', function(original)
    if vim.v.hlsearch and vim.v.hlsearch == 1 then
       vim.cmd('nohlsearch')
    end
    original()
-end)
+end, { desc = 'disable search highlight' })
 ```
 
 ## Acknowledgments
