@@ -67,9 +67,10 @@ end
 ---which the original keymapping will be executed.
 ---@param mode string mode short name
 ---@param map table keymap object
----@return function
+---@return function the function on call of which the original mapping will be executed
+---@return string? desc the `dssc` field of the original mapping
 local function get_original(mode, map)
-   local lhs = string.format('<Plug>(keymap-amend.fallback:%s)', map.lhs)
+   local lhs = string.format('<Plug>(keymap-amend.original:%s)', map.lhs)
 
    if map.buffer then
       local bufnr = vim.api.nvim_get_current_buf()
@@ -92,15 +93,21 @@ local function get_original(mode, map)
       })
    end
 
-   local feedkeys_mode = map.noremap and 'in' or 'im'
+   if map.desc:find('[keymap-amend.nvim', 1, true) then
+      error('[keymap-amend.nvim] Trying to amend already amended keymap')
+   end
 
-   return function()
+   local feedkeys_mode = 'i'
+
+   local function fun()
       if mode == 'n' then
-         vim.api.nvim_feedkeys(vim.v.count1 .. termcodes(lhs), feedkeys_mode, true)
+         vim.api.nvim_feedkeys(vim.v.count1..termcodes(lhs), feedkeys_mode, false)
       else
-         vim.api.nvim_feedkeys(termcodes(lhs), feedkeys_mode, true)
+         vim.api.nvim_feedkeys(termcodes(lhs), feedkeys_mode, false)
       end
    end
+
+   return fun, map.desc
 end
 
 -- local function get_original(_, map)
@@ -132,7 +139,12 @@ end
 ---@param opts table
 local function single_mode_amend(mode, lhs, rhs, opts)
    local map = get_map(mode, lhs)
-   local original = get_original(mode, map)
+   local original, orig_desc = get_original(mode, map)
+   opts = opts or {}
+   opts.desc = table.concat{
+      '[keymap-amend.nvim', (opts.desc and ': '..opts.desc or ''), '] ',
+      orig_desc or ''
+   }
    vim.keymap.set(mode, lhs, function() rhs(original) end, opts)
 end
 
