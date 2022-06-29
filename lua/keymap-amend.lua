@@ -93,7 +93,7 @@ local function get_original(mode, map)
       })
    end
 
-   if map.desc:find('[keymap-amend.nvim', 1, true) then
+   if map.desc and map.desc:find('[keymap-amend.nvim', 1, true) then
       error('[keymap-amend.nvim] Trying to amend already amended keymap')
    end
 
