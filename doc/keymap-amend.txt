@@ -1,0 +1,42 @@
+keymap-amend.txt
+================================================================================
+DESCRIPTION							*keymap-amend*
+
+This plugin allows to amend the exisintg keybinding in Neovim. It is done with
+the function which is required from the `keymap-amend` module.
+
+Its signature is equal to |vim.keymap.set()| function with one exception:
+the {rhs} parameter should be function that receives one parameter — a function
+on call of which the original keymapping will be executed. This function is
+constructed and passed automaticaly.  You only need to "accept" it in your {rhs}
+function and call on need.
+>
+	local keymap = vim.keymap
+	keymap.amend = require('keymap-amend')
+
+	keymap.amend(mode, lhs, function(original)
+	    -- your custom logic
+	    original() -- execute the original 'lhs' mapping
+	end, opts)
+<
+================================================================================
+EXAMPLES
+>
+	keymap.amend('n', 'k', function(original)
+	   print('k key is amended!')
+	   original()
+	end)
+<
+
+Make <Esc> disable highlighting of recently searched text in addition to its
+original functionality:
+>
+	keymap.amend('n', '<Esc>', function(original)
+	   if vim.v.hlsearch and vim.v.hlsearch == 1 then
+	      vim.cmd('nohlsearch')
+	   end
+	   original()
+	end, { desc = 'disable search highlight' })
+<
+--------------------------------------------------------------------------------
+ vim:tw=80:isk=!-~,^*,^\|,^\":ts=8:noet:ft=help:norl:
