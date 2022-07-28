@@ -1,8 +1,5 @@
 # keymap-amend.nvim
 
-> :warning: **WARNING**: This plugin is in beta and a lot of rough edges are expected.
-> You are welcome to open issues.
-
 **Neovim v0.7 or higher is required**
 
 This plugin allows to amend the exisintg keybinding in Neovim. It is done with the
@@ -58,6 +55,40 @@ keymap.amend('n', '<Esc>', function(original)
    original()
 end, { desc = 'disable search highlight' })
 ```
+
+### yank-ring with multiple-cursors
+
+Make [yanky.nvim](https://github.com/gbprod/yanky.nvim) and
+[vim-visual-multi](https://github.com/mg979/vim-visual-multi) plugins share `<C-n>`
+key-chord. `vim-visual-multi` should be loaded before `yanky.nvim`. In this example
+[packer.nvim](https://github.com/wbthomason/packer.nvim) plugin manager is used to achive this.
+
+```lua
+use 'mg979/vim-visual-multi'
+use { 'gbprod/yanky.nvim',
+   after = 'vim-visual-multi',
+   config = function() require('yanky').setup() end
+}
+
+keymap.amend('n', '<C-p>', function(original)
+   if yanky.can_cycle() then
+      yanky.cycle(-1)
+   else
+      original()
+   end
+end)
+
+keymap.amend('n', '<C-n>', function(original)
+   if yanky.can_cycle() then
+      yanky.cycle(1)
+   else
+      original()
+   end
+end, { desc = 'yank-ring + multiple-cursors' })
+```
+
+Now `<C-n>` will cycle the yank-ring only after paste, in all other cases it will activate
+multiple cursors.
 
 ## Acknowledgments
 
