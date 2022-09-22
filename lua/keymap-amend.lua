@@ -71,24 +71,22 @@ end
 ---@return function
 local function get_original(map)
    return function()
-      local f = {} -- keys for feeding
+      local keys, fmode
       if map.expr then
          if map.callback then
-            f.keys = map.callback()
+            keys = map.callback()
          else
-            f.keys = vim.api.nvim_eval(map.rhs)
+            keys = api.nvim_eval(map.rhs)
          end
-         f.keys = termcodes(f.keys)
-         f.mode = map.noremap and 'in' or 'im'
       elseif map.callback then
          map.callback()
          return
       else
-         f.keys = map.rhs
+         keys = map.rhs
       end
-      f.keys = termcodes(f.keys)
-      f.mode = map.noremap and 'in' or 'im'
-      vim.api.nvim_feedkeys(f.keys, f.mode, true)
+      keys = termcodes(keys)
+      fmode = map.noremap and 'in' or 'im'
+      api.nvim_feedkeys(keys, fmode, false)
    end
 end
 
