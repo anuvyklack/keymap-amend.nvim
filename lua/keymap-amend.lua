@@ -1,8 +1,10 @@
+local api = vim.api
+
 ---Shortcut for `nvim_replace_termcodes`.
 ---@param keys string
 ---@return string
 local function termcodes(keys)
-   return vim.api.nvim_replace_termcodes(keys, true, true, true)
+   return api.nvim_replace_termcodes(keys, true, true, true) --[[@as string]]
 end
 
 ---Returns if two key sequence are equal or not.
@@ -18,7 +20,7 @@ end
 ---@param lhs string
 ---@return table
 local function get_map(mode, lhs)
-   for _, map in ipairs(vim.api.nvim_buf_get_keymap(0, mode)) do
+   for _, map in ipairs(api.nvim_buf_get_keymap(0, mode)) do
       if keymap_equals(map.lhs, lhs) then
          return {
             lhs = map.lhs,
@@ -34,7 +36,7 @@ local function get_map(mode, lhs)
       end
    end
 
-   for _, map in ipairs(vim.api.nvim_get_keymap(mode)) do
+   for _, map in ipairs(api.nvim_get_keymap(mode)) do
       if keymap_equals(map.lhs, lhs) then
          return {
             lhs = map.lhs,
