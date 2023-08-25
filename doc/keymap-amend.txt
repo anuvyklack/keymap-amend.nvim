@@ -19,6 +19,21 @@ function and call on need.
 	    original() -- execute the original 'lhs' mapping
 	end, opts)
 <
+
+We also provide a helper function for getting the original keymap and a function that
+executes the original 'lhs' mapping for use with other methods of creating keymaps
+
+>
+	vim.keymap.get = require('keymap-amend').get
+	local original = vim.keymap.get(mode, lhs):original()
+<
+
+This is equivalent to the `original` parameter in keymap.amend
+the get() function also returns other information about the keymapping:
+It contains all the field from nvim_get_keymap,
+as well as a buffer parameter that is false for global keymaps,
+as well as the `original` method to get a callable
+
 ================================================================================
 EXAMPLES
 >

@@ -3,11 +3,11 @@
 **Neovim v0.7 or higher is required**
 
 This plugin allows to amend the exisintg keybinding in Neovim. It is done with the
-function which is required from the `keymap-amend` module.  The signature of this function
+function which is required from the `keymap-amend` module. The signature of this function
 is equal to **vim.keymap.set** function (`:help vim.keymap.set()`) with one exception: the
 `rhs` parameter should be a function that receives one parameter — a function on call of
 which the original keymapping will be executed. This function is constructed and passed
-automaticaly.  You only need to "accept" it in your `rhs` function and call on need.
+automaticaly. You only need to "accept" it in your `rhs` function and call on need.
 
 ```lua
 local keymap = vim.keymap
@@ -21,7 +21,21 @@ end, opts)
 
 You need to watch that the amendment happens after the original keymap is set.
 
-## Instalation
+We also provide a helper function for getting the original keymap and a function that
+executes the original 'lhs' mapping for use with other methods of creating keymaps
+
+```lua
+vim.keymap.get = require('keymap-amend').get
+local original = vim.keymap.get(mode, lhs):original()
+```
+
+This is equivalent to the `original` parameter in keymap.amend
+the get() function also returns other information about the keymapping:
+It contains all the field from nvim_get_keymap,
+as well as a buffer parameter that is false for global keymaps,
+as well as the `original` method to get a callable
+
+## Installation
 
 With [packer](https://github.com/wbthomason/packer.nvim):
 
@@ -94,6 +108,5 @@ multiple cursors.
 
 This plugin was inspired with [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
 fallback mechanics.
-
 
 <!-- vim: set tw=90: -->
